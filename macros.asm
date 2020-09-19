@@ -6,7 +6,7 @@ print macro cadena
   int 21h
 endm
 
-getChar macros
+getChar macro
   mov ah, 01h
   int 21h
 endm
