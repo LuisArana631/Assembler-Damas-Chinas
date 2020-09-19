@@ -9,7 +9,7 @@ crearFile macro ruta, handle
     mov handle, ax
 endm
 
-.mode small
+.model small
 .stack
 .data
 
@@ -23,13 +23,14 @@ endm
   encabezado8 db 0ah, 0dh, "|    Carnet: 201700988                                 |", "$"
   encabezado6 db 0ah, 0dh, "|    Seccion A                                         |", "$"
   encabezado9 db 0ah, 0dh, "|______________________________________________________|", "$"
-  opcion0     db 0ah, 0dh, "|    Opciones:                                         |", "$"
-  opcion1     db 0ah, 0dh, "|         1. Iniciar Juego                             |", "$"
-  opcion2     db 0ah, 0dh, "|         2. Cargar Juego                              |", "$"
-  opcion3     db 0ah, 0dh, "|         3. Salir                                     |", "$"
-  opcion4     db 0ah, 0dh, "|______________________________________________________|", "$"
+  opcion0     db 0ah, 0dh, "|                                                      |", "$"
+  opcion1     db 0ah, 0dh, "|    Opciones:                                         |", "$"
+  opcion2     db 0ah, 0dh, "|         1. Iniciar Juego                             |", "$"
+  opcion3     db 0ah, 0dh, "|         2. Cargar Juego                              |", "$"
+  opcion4     db 0ah, 0dh, "|         3. Salir                                     |", "$"
+  opcion5     db 0ah, 0dh, "|______________________________________________________|", "$"
 
-  textoOpcion db 0ah, 0dh, "  Seleccione una Opcion:", "$"
+  textoOpcion db 0ah, 0dh, "  Seleccione una Opcion: ", "$"
 
   msgError0    db 0ah, 0dh, "  ** Error al crear archivo **", "$"
 
@@ -37,9 +38,7 @@ endm
   bufferEscritura db 1000 dup('$')
   bufferAuxiliar db  1000 dup('$')
 
-
-
-  opcionActual db '', '$'
+  opcionActual db ' ', '$'
 
   salto db 0ah, 0dh, "$"
 
@@ -64,20 +63,23 @@ main proc
     print opcion2
     print opcion3
     print opcion4
+    print opcion5
     print salto
     print textoOpcion
     selectMenu opcionActual
-  Jugar:
-    print opcion1
-    jmp inicio
-  CargarJuego:
+    print salto
+    print salto
+  jugar:
     print opcion2
     jmp inicio
-  ErrorCrear:
+  cargarJuego:
+    print opcion3
+    jmp inicio
+  errorCrear:
     print msgError0
     getChar
     jmp inicio
-  Salir:
+  salir:
     mov ah, 4ch
     xor al, al
     int 21h
