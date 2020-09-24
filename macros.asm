@@ -79,12 +79,13 @@ get_text_kb macro buffer
   inc si
   jmp char_get
   findout:
-  mov al, 24h
+  mov al, 00h
   mov buffer[si], al
 endm
 
 validar_mov macro comando, ficha
   LOCAL reporte, guardar, movimiento_ficha
+
   compare_str comando, cmdExit
   je inicio
   compare_str comando, cmdSave
@@ -92,15 +93,108 @@ validar_mov macro comando, ficha
   compare_str comando, cmdShow
   je reporte
 
+  movimiento_ficha:
+  getChar
+  repetir_turno ficha
   guardar:
   limpiarBuffer bufferEscritura, SIZEOF bufferEscritura, 24h
   save_game bufferEscritura, handleFichero, fila8, fila7, fila6, fila5, fila4, fila3, fila2, fila1
   repetir_turno ficha
   reporte:
-  print save_
-  movimiento_ficha:
-  print msgMovDia
+  rep_game bufferReporte, handlerReporte, fila8, fila7, fila6, fila5, fila4, fila3, fila2, fila1
+  repetir_turno ficha
+
+endm
+
+rep_game macro buffer, handler, f8, f7, f6, f5, f4, f3, f2, f1
+  crearFile buffer, handler
+
+  escribirF SIZEOF start_html, start_html, handler
+  escribirF SIZEOF head_html, head_html, handler
+  escribirF SIZEOF h1_html, h1_html, handler
+  LEA BX, TIME                 ; BX=offset address of string TIME
+  CALL get_time
+  escribirF SIZEOF TIME, TIME, handler
+  escribirF SIZEOF h1e_html, h1e_html, handler
+  escribirF SIZEOF inicio_html, inicio_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f8, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f7, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f6, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f5, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f4, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f3, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f2, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF fila_html, fila_html, handler
+  prep_ff f1, handler
+  escribirF SIZEOF fila_end_html, fila_end_html, handler
+  escribirF SIZEOF end_html, end_html, handler
+
+  cerrarF handler
+  print report_
   getChar
+endm
+
+prep_ff macro fila, handler
+  LOCAL loop_save, print_clear, print_clearn, print_fb, print_fn, print_rn, print_rb, cond_loop
+  xor si, si
+
+  loop_save:
+  mov al, fila[si]
+  cmp al, 000b
+  je print_clear
+  cmp al, 111b
+  je print_clearn
+  cmp al, 100b
+  je print_fb
+  cmp al, 010b
+  je print_fn
+  cmp al, 101b
+  je print_rn
+  cmp al, 011b
+  je print_rb
+
+  print_fb:
+  escribirF SIZEOF celda_fb, celda_fb, handler
+  jmp cond_loop
+
+  print_fn:
+  escribirF SIZEOF celda_fn, celda_fn, handler
+  jmp cond_loop
+
+  print_clear:
+  escribirF SIZEOF celda_vnp, celda_vnp, handler
+  jmp cond_loop
+
+  print_clearn:
+  escribirF SIZEOF celda_vp, celda_vp, handler
+  jmp cond_loop
+
+  print_rn:
+  escribirF SIZEOF celda_rn, celda_rn, handler
+  jmp cond_loop
+
+  print_rb:
+  escribirF SIZEOF celda_rb, celda_rb, handler
+  jmp cond_loop
+
+  cond_loop:
+  inc si
+  cmp si, 8
+  jb loop_save
 endm
 
 repetir_turno macro ficha
@@ -126,7 +220,6 @@ save_game macro buffer, handler, f8, f7, f6, f5, f4, f3, f2 ,f1
   print_ff f2, handler
   print_ff f1, handler
   cerrarF handler
-  print salto
   print save_
   getChar
 endm
@@ -165,6 +258,7 @@ print_ff macro fila, handle
   jmp cond_loop
   print_rb:
   escribirF SIZEOF RBlanco, RBlanco, handle
+  jmp cond_loop
   cond_loop:
   inc si
   cmp si, 8
@@ -219,21 +313,21 @@ llenar_filas macro f8, f7, f6, f5, f4, f3, f2, f1, infor, numBytes
 
   loop_fill:
   cmp si, 8
-  je fill_f8
+  jb fill_f8
   cmp si, 16
-  je fill_f7
+  jb fill_f7
   cmp si, 24
-  je fill_f6
+  jb fill_f6
   cmp si, 32
-  je fill_f5
+  jb fill_f5
   cmp si, 40
-  je fill_f4
+  jb fill_f4
   cmp si, 48
-  je fill_f3
+  jb fill_f3
   cmp si, 56
-  je fill_f2
+  jb fill_f2
   cmp si, 64
-  je fill_f1
+  jb fill_f1
 
   fill_f8:
   insert_val f8, di, infor[si]
@@ -264,12 +358,14 @@ llenar_filas macro f8, f7, f6, f5, f4, f3, f2, f1, infor, numBytes
   jmp condi_loop
 
   fill_f1:
-  insert_val f1, di, infor[si]
+  mov al, infor[si]
+  insert_val f1, di, al
   jmp condi_loop
 
   condi_loop:
   inc si
   inc di
+
   cmp di, 8
   jb reset_fil
   xor di, di
@@ -281,6 +377,7 @@ endm
 
 insert_val macro fila, pos, dato
 LOCAL insert_fn, insert_fb, insert_rn, insert_rb, insert_vp, insert_vnp, end_ins
+
   cmp dato, 30h
   je insert_fn
   cmp dato, 31h
@@ -325,7 +422,6 @@ LOCAL insert_fn, insert_fb, insert_rn, insert_rb, insert_vp, insert_vnp, end_ins
     jmp end_ins
 
   end_ins:
-
 
 endm
 

@@ -73,10 +73,9 @@ endm
 
 cargarJuego macro
   clear_screen
-  limpiarBuffer bufferLectura, SIZEOF bufferLectura, 24h
   print pathFile
+  limpiarBuffer bufferLectura, SIZEOF bufferLectura, 24h
   get_text_kb bufferLectura
-  print bufferLectura
   abrirF bufferLectura, handleAux
   loop_read:
   limpiarBuffer bufferAuxiliar, SIZEOF bufferAuxiliar, 24h
@@ -91,6 +90,50 @@ endm
 
   puntosN WORD 0
   puntosB WORD 0
+
+  bufferReporte db "c:\tablero.html",00h
+  handlerReporte dw ?
+  ;----------------------------------------> ETIQUETAS HTML
+  start_html db "<!DOCTYPE html>", 0ah, 0dh,
+						    "<html lang=en>", 0ah, 0dh
+
+  head_html  db "<head>", 0ah, 0dh,
+                "<meta charset=utf-8>", 0ah, 0dh,
+                "<title>Reporte Damas</title>", 0ah, 0dh,
+						    "</head>", 0ah, 0dh,
+                "<body bgcolor=#d1d5d4>", 0ah, 0dh
+
+  h1_html db "<h1>", 0ah, 0dh
+  h1e_html db " - 201700988</h1>", 0ah, 0dh
+
+  inicio_html  db "<table border=0 cellspacing=2 cellpadding=2 bgcolor=#005b96>", 0ah, 0dh
+
+  fila_html db "<tr align=center>", 0ah, 0dh
+
+  celda_fb db "<td width=47px; height=47px;>", 0ah,  0dh,
+              "<img src=fb.png style=max-height:100%; max-width:100%/>", 0ah, 0dh,
+              "</td>", 0ah, 0dh
+
+  celda_fn db "<td width=47px; height=47px;>", 0ah,  0dh,
+              "<img src=fn.png style=max-height:100%; max-width:100%/>", 0ah, 0dh,
+              "</td>", 0ah, 0dh
+
+  celda_rb db "<td width=47px; height=47px;>", 0ah,  0dh,
+              "<img src=rb.png style=max-height:100%; max-width:100%/>", 0ah, 0dh,
+              "</td>", 0ah, 0dh
+
+  celda_rn db "<td width=47px; height=47px;>", 0ah,  0dh,
+              "<img src=rn.png style=max-height:100%; max-width:100%/>", 0ah, 0dh,
+              "</td>", 0ah, 0dh
+
+  celda_vp db "<td bgcolor=#b3cde0 width=47px; height=47px;></td>", 0ah,  0dh
+  celda_vnp db "<td width=47px; height=47px;></td>", 0ah,  0dh
+
+  fila_end_html db "</tr>", 0ah, 0dh
+
+  end_html db "</table>", 0ah, 0dh,
+              "</body>", 0ah, 0dh,
+              "</html>", 0ah, 0dh
 
   encabezado0 db 0ah, 0dh, " ______________________________________________________", "$"
   encabezado1 db 0ah, 0dh, "|                                                      |", "$"
@@ -117,6 +160,7 @@ endm
   name_file   db 0ah, 0dh, "  Ingresa el nombre del archivo: ", "$"
   save_       db 0ah, 0dh, "  -> Juego guardado exitosamente!", "$"
   load_       db 0ah, 0dh, "  -> Juego cargado exitosamente!", "$"
+  report_       db 0ah, 0dh, "  -> Juego reportado exitosamente!", "$"
 
   ;Contenido de tablero
   f8 db " 8  |", "$"
@@ -225,7 +269,6 @@ main proc
     jmp inicio
   cargar:
     cargarJuego
-    getChar
     jmp inicio
   errorCrear:
     print msgError0
