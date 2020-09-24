@@ -84,7 +84,7 @@ get_text_kb macro buffer
 endm
 
 validar_mov macro comando, ficha
-  LOCAL reporte, guardar, movimiento_ficha
+  LOCAL reporte, guardar, movimiento_ficha, movimiento_simple, movimiento_compuesto
 
   compare_str comando, cmdExit
   je inicio
@@ -94,16 +94,44 @@ validar_mov macro comando, ficha
   je reporte
 
   movimiento_ficha:
-  getChar
-  repetir_turno ficha
+  crearTablero
+  mov al, comando[2]
+  cmp al, 2ch
+  je movimiento_compuesto
+  jmp movimiento_simple
+
   guardar:
   limpiarBuffer bufferEscritura, SIZEOF bufferEscritura, 24h
   save_game bufferEscritura, handleFichero, fila8, fila7, fila6, fila5, fila4, fila3, fila2, fila1
   repetir_turno ficha
+
   reporte:
   rep_game bufferReporte, handlerReporte, fila8, fila7, fila6, fila5, fila4, fila3, fila2, fila1
   repetir_turno ficha
 
+  movimiento_compuesto:
+  ;VERIFICAR INICIO
+
+  ;VERIFICAR DESTINO
+
+  ;MOVER PIEZA
+
+  getChar
+  select_next ficha
+
+  movimiento_simple:
+  ;BUSCAR DISPONIBLE
+
+  ;VERIFICAR DESTINO
+
+  ;MOVER PIEZA
+
+  getChar
+  select_next ficha
+endm
+
+mover_pieza macro fil_inicio, fil_fin, col_inicio, col_fin
+  
 endm
 
 rep_game macro buffer, handler, f8, f7, f6, f5, f4, f3, f2, f1
@@ -163,9 +191,9 @@ prep_ff macro fila, handler
   cmp al, 010b
   je print_fn
   cmp al, 101b
-  je print_rn
-  cmp al, 011b
   je print_rb
+  cmp al, 011b
+  je print_rn
 
   print_fb:
   escribirF SIZEOF celda_fb, celda_fb, handler
@@ -207,6 +235,16 @@ repetir_turno macro ficha
   je turno_blanco
 endm
 
+select_next macro ficha
+  xor si, si
+  inc si
+  mov al, ficha[si]
+  cmp al, 4eh
+  je turno_blanco
+  cmp al, 42h
+  je turno_negra
+endm
+
 save_game macro buffer, handler, f8, f7, f6, f5, f4, f3, f2 ,f1
   print name_file
   get_path buffer
@@ -238,9 +276,9 @@ print_ff macro fila, handle
   cmp al, 010b
   je print_fn
   cmp al, 101b
-  je print_rn
-  cmp al, 011b
   je print_rb
+  cmp al, 011b
+  je print_rn
   print_fb:
   escribirF SIZEOF FBlanco, FBlanco, handle
   jmp cond_loop

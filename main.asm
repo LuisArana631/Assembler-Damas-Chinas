@@ -187,7 +187,7 @@ endm
   msgError3   db 0ah, 0dh, "  ** Error al escribir archivo **", "$"
   msgError4   db 0ah, 0dh, "  ** Error al cerrar archivo **", "$"
   msgMovIn    db 0ah, 0dh, "  ** No se puede retroceder la ficha **", "$"
-  msgMovDia   db 0ah, 0dh, "  ** Solo se puede mover en diagonal **", "$"
+  msgMovM     db 0ah, 0dh, "  ** Movimiento incorrecto **", "$"
 
   str_instr db 4 dup('$')
   ;Archivos
@@ -290,6 +290,7 @@ main proc
     print msgError4
     getChar
     jmp inicio
+
   salir:
     mov ah, 4ch
     xor al, al
