@@ -42,6 +42,30 @@ endm
 
 iniciarJuego macro
   iniciargame:
+  mov al, rb8
+  mov fila8, al
+
+  mov al, rb7
+  mov fila7, al
+
+  mov al, rb6
+  mov fila6, al
+
+  mov al, rb5
+  mov fila5, al
+
+  mov al, rb4
+  mov fila4, al
+
+  mov al, rb3
+  mov fila3, al
+
+  mov al, rb2
+  mov fila2, al
+
+  mov al, rb1
+  mov fila1, al
+
   mov puntosB, 0
   mov puntosN, 0
   clear_screen
@@ -197,6 +221,7 @@ endm
   msgEntramos    db 0ah, 0dh, "  ** GOLA **", "$"
 
   str_instr db 4 dup('$')
+  print_char db 4 dup('$')
   ;Archivos
   bufferLectura db 1000 dup('$')
   bufferEscritura db 1000 dup('$')
@@ -224,6 +249,15 @@ endm
   fila3 db 111b, 010b, 111b, 010b, 111b, 010b, 111b, 010b
   fila2 db 010b, 111b, 010b, 111b, 010b, 111b, 010b, 111b
   fila1 db 111b, 010b, 111b, 010b, 111b, 010b, 111b, 010b
+
+  rb8 db 100b, 111b, 100b, 111b, 100b, 111b, 100b, 111b
+  rb7 db 111b, 100b, 111b, 100b, 111b, 100b, 111b, 100b
+  rb6 db 100b, 111b, 100b, 111b, 100b, 111b, 100b, 111b
+  rb5 db 111b, 000b, 111b, 000b, 111b, 000b, 111b, 000b
+  rb4 db 000b, 111b, 000b, 111b, 000b, 111b, 000b, 111b
+  rb3 db 111b, 010b, 111b, 010b, 111b, 010b, 111b, 010b
+  rb2 db 010b, 111b, 010b, 111b, 010b, 111b, 010b, 111b
+  rb1 db 111b, 010b, 111b, 010b, 111b, 010b, 111b, 010b
 
   salto db 0ah, 0dh, "$"
 
