@@ -94,7 +94,6 @@ validar_mov macro comando, ficha
   je reporte
 
   movimiento_ficha:
-  crearTablero
   mov al, comando[2]
   cmp al, 2ch
   je movimiento_compuesto
@@ -115,6 +114,17 @@ validar_mov macro comando, ficha
   ;VERIFICAR DESTINO
 
   ;MOVER PIEZA
+  xor si, si
+  mov al, comando[si]
+  inc si
+  mov bl, comando[si]
+  inc si
+  inc si
+  mov cl, comando[si]
+  inc si
+  mov dl, comando[si]
+
+  mover_pieza bl, dl, al, cl, ficha
 
   getChar
   select_next ficha
@@ -126,13 +136,378 @@ validar_mov macro comando, ficha
 
   ;MOVER PIEZA
 
+  crearTablero
   getChar
   select_next ficha
 endm
 
-mover_pieza macro fil_inicio, fil_fin, col_inicio, col_fin
-  
+mover_pieza macro fil_inicio, fil_fin, col_inicio, col_fin, ficha
+LOCAL select_fila, mov_fila8, mov_fila7, mov_fila6, mov_fila5, mov_fila4, mov_fila3, mov_fila2, mov_fila1, select_fin, pushn8, pushb8, pushn7, pushb7, pushn6, pushb6, pushn5, pushb5, pushn4, pushb4, pushn3, pushb3, pushn2, pushb2, pushn1, pushb1, fin_move, fin_fila8, fin_fila7, fin_fila6, fin_fila5, fin_fila4, fin_fila3, fin_fila2, fin_fila1
+
+select_fila:
+  mov ah, fil_inicio
+  cmp ah, 31h ;1
+  je mov_fila1
+  cmp ah, 32h ;2
+  je mov_fila2
+  cmp ah, 33h ;3
+  je mov_fila3
+  cmp ah, 34h ;4
+  je mov_fila4
+  cmp ah, 35h ;5
+  je mov_fila5
+  cmp ah, 36h ;6
+  je mov_fila6
+  cmp ah, 37h ;7
+  je mov_fila7
+  cmp ah, 38h ;8
+  je mov_fila8
+
+mov_fila8:
+print msgEntramos
+print f8
+  push_valor col_inicio, ficha, fila8, 000b
+  jmp select_fin
+
+mov_fila7:
+print msgEntramos
+print f7
+  push_valor col_inicio, ficha, fila7, 000b
+  jmp select_fin
+
+mov_fila6:
+print msgEntramos
+print f6
+  push_valor col_inicio, ficha, fila6, 000b
+  jmp select_fin
+
+mov_fila5:
+print msgEntramos
+print f5
+  push_valor col_inicio, ficha, fila5,  000b
+  jmp select_fin
+
+mov_fila4:
+print msgEntramos
+print f4
+  push_valor col_inicio, ficha, fila4, 000b
+  jmp select_fin
+
+mov_fila3:
+print msgEntramos
+print f3
+  push_valor col_inicio, ficha, fila3, 000b
+  jmp select_fin
+
+mov_fila2:
+print msgEntramos
+print f2
+  push_valor col_inicio, ficha, fila2, 000b
+  jmp select_fin
+
+mov_fila1:
+print msgEntramos
+print f1
+  push_valor col_inicio, ficha, fila1, 000b
+  jmp select_fin
+
+select_fin:
+  mov ah, fil_fin
+  cmp ah, 31h ;1
+  je fin_fila1
+  cmp ah, 32h ;2
+  je fin_fila2
+  cmp ah, 33h ;3
+  je fin_fila3
+  cmp ah, 34h ;4
+  je fin_fila4
+  cmp ah, 35h ;5
+  je fin_fila5
+  cmp ah, 36h ;6
+  je fin_fila6
+  cmp ah, 37h ;7
+  je fin_fila7
+  cmp ah, 38h ;8
+  je fin_fila8
+
+
+  fin_fila8:
+  print msgEntramos
+  print f8
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn8
+    cmp ch, 42h
+    je pushb8
+
+  fin_fila7:
+  print msgEntramos
+  print f7
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn7
+    cmp ch, 42h
+    je pushb7
+
+  fin_fila6:
+  print msgEntramos
+  print f6
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn6
+    cmp ch, 42h
+    je pushb6
+
+  fin_fila5:
+  print msgEntramos
+  print f5
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn5
+    cmp ch, 42h
+    je pushb5
+
+  fin_fila4:
+  print msgEntramos
+  print f4
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn4
+    cmp ch, 42h
+    je pushb4
+
+  fin_fila3:
+  print msgEntramos
+  print f3
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn3
+    cmp ch, 42h
+    je pushb3
+
+  fin_fila2:
+  print msgEntramos
+  print f2
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn2
+    cmp ch, 42h
+    je pushb2
+
+  fin_fila1:
+  print msgEntramos
+  print f1
+    xor si, si
+    inc si
+    mov ch, ficha[si]
+    cmp ch, 4eh
+    je pushn1
+    cmp ch, 42h
+    je pushb1
+
+  pushn8:
+    push_valor col_fin, ficha, fila8, 010b
+    jmp fin_move
+
+  pushb8:
+    push_valor col_fin, ficha, fila8, 100b
+    jmp fin_move
+
+  pushn7:
+    push_valor col_fin, ficha, fila7, 010b
+    jmp fin_move
+
+  pushb7:
+    push_valor col_fin, ficha, fila7, 100b
+    jmp fin_move
+
+  pushn6:
+    push_valor col_fin, ficha, fila6, 010b
+    jmp fin_move
+
+  pushb6:
+    push_valor col_fin, ficha, fila6, 100b
+    jmp fin_move
+
+  pushn5:
+    push_valor col_fin, ficha, fila5, 010b
+    jmp fin_move
+
+  pushb5:
+  print msgEntramos
+    push_valor col_fin, ficha, fila5, 100b
+    jmp fin_move
+
+  pushn4:
+    push_valor col_fin, ficha, fila4, 010b
+    jmp fin_move
+
+  pushb4:
+    push_valor col_fin, ficha, fila4, 100b
+    jmp fin_move
+
+  pushn3:
+    push_valor col_fin, ficha, fila3, 010b
+    jmp fin_move
+
+  pushb3:
+    push_valor col_fin, ficha, fila3, 100b
+    jmp fin_move
+
+  pushn2:
+    push_valor col_fin, ficha, fila2, 010b
+    jmp fin_move
+
+  pushb2:
+    push_valor col_fin, ficha, fila2, 100b
+    jmp fin_move
+
+  pushn1:
+    push_valor col_fin, ficha, fila1, 010b
+    jmp fin_move
+
+  pushb1:
+    push_valor col_fin, ficha, fila1, 100b
+    jmp fin_move
+
+
+    fin_move:
+    crearTablero
 endm
+
+
+push_valor macro col_push, ficha, fila, inser
+LOCAL fil_fin, pcol1, pcol2, pcol3, pcol4, pcol5, pcol6, pcol7, pcol8, end_push
+
+fil_fin:
+mov ah, col_push
+cmp ah, 41h ;A
+je pcol1
+cmp ah, 42h ;B
+je pcol2
+cmp ah, 43h ;C
+je pcol3
+cmp ah, 44h ;D
+je pcol4
+cmp ah, 45h ;E
+je pcol5
+cmp ah, 46h ;F
+je pcol6
+cmp ah, 47h ;G
+je pcol7
+cmp ah, 48h ;H
+je pcol8
+
+
+pcol1:
+print msgEntramos
+print f1
+xor si, si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol2:
+print msgEntramos
+print f2
+xor si, si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol3:
+print msgEntramos
+print f3
+xor si, si
+inc si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol4:
+print msgEntramos
+print f4
+xor si, si
+inc si
+inc si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol5:
+print msgEntramos
+print f5
+xor si, si
+inc si
+inc si
+inc si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol6:
+print msgEntramos
+print f6
+xor si, si
+inc si
+inc si
+inc si
+inc si
+inc si
+mov ah, inser
+mov fila[6], ah
+jmp end_push
+
+pcol7:
+print msgEntramos
+print f7
+xor si, si
+inc si
+inc si
+inc si
+inc si
+inc si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+pcol8:
+print msgEntramos
+print f8
+xor si, si
+inc si
+inc si
+inc si
+inc si
+inc si
+inc si
+inc si
+mov ah, inser
+mov fila[si], ah
+jmp end_push
+
+  end_push:
+endm
+
 
 rep_game macro buffer, handler, f8, f7, f6, f5, f4, f3, f2, f1
   crearFile buffer, handler

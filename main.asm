@@ -189,6 +189,13 @@ endm
   msgMovIn    db 0ah, 0dh, "  ** No se puede retroceder la ficha **", "$"
   msgMovM     db 0ah, 0dh, "  ** Movimiento incorrecto **", "$"
 
+  msgINI     db 0ah, 0dh, "  ** VIENDO INICIO **", "$"
+  msgFIN     db 0ah, 0dh, "  ** VIENDO FIN **", "$"
+  msgINS     db 0ah, 0dh, "  ** VIENDO INSERT  INICIO **", "$"
+  msgINS2     db 0ah, 0dh, "  ** VIENDO INSERT FIN **", "$"
+
+  msgEntramos    db 0ah, 0dh, "  ** GOLA **", "$"
+
   str_instr db 4 dup('$')
   ;Archivos
   bufferLectura db 1000 dup('$')
